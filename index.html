@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing Robots</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#505050">
+    <link rel="icon" href="icons/icon-192x192.png.png" sizes="192x192">
+    <link rel="icon" href="icons/icon-512x512.png.png" sizes="512x512">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png.png">
+</head>
+<body>
+    <div id="board"></div>
+    <div id="controls">
+        <div id="move-counter">Moves: 0</div>
+        <div class="button-group">
+            <div class="groups12">
+                <div class="group1-buttons">
+                    <button id="undo">Undo Last Move</button>
+                    <button id="reset-robots">Reset Robots</button>
+                </div>
+                <div class="group2-buttons">
+                    <button id="new-target">New Target</button>
+                    <button id="new-board">New Board</button>
+                </div>
+            </div>
+            <div class="groups34">
+                <div class="group3-buttons">
+                    <button id="recording-button">Record Solution</button>
+                    <button id="play-saved-solution" disabled>Replay Solution</button>
+                </div>
+                <div class="group4-buttons">
+                    <button id="share-solution" disabled>Share Solution</button>
+                    <button id="share-board">Share Board</button>
+                </div>
+            </div>
+        </div>
+        <button id="check-clipboard">Load Board State</button>
+
+    </div>
+    
+    <script src="main.js" type="module"></script>
+    <script src="obstacles.js" type="module"></script>
+    <script src="robots.js" type="module"></script>
+    <script src="newTarget.js" type="module"></script>
+    <script src="movement.js" type="module"></script>
+    <script src="eventListeners.js" type="module"></script>
+    <script src="animation.js" type="module"></script>
+    <script src="shareBoard.js" type="module"></script>
+</body>
+</html>
