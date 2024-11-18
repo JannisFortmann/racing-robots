@@ -1,17 +1,4 @@
-import init, { parse_board_string } from '../solver/rust/pkg/ricochetrobots.js';
 
-async function initializeWasm() {
-    try {
-        // Initialize the wasm module
-        await init();
-        console.log("WASM Initialized successfully!");
-    } catch (error) {
-        console.error("Failed to initialize WASM", error);
-    }
-}
-
-// Initialize WebAssembly before using any Rust functions
-initializeWasm();
 
 export async function convertBoardState() {
     const gridSize = 33;        // Original grid size in the document
