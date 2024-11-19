@@ -1,0 +1,27 @@
+{
+	"name": "ricochetrobots",
+	"description": "A fast game model and solver for Ricochet Robots.",
+	"keywords": [
+		"Games",
+		"Ricochet Robots",
+		"Rust"
+	],
+	"homepage": "https://ricochetrobots.kevincox.ca",
+	"license": "Apache 2.0",
+	"bugs": {
+		"url": "https://gitlab.com/kevincox/ricochetrobots/-/issues",
+		"email": "contact-project+kevincox-ricochetrobots-support@incoming.gitlab.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://gitlab.com/kevincox/ricochetrobots.git"
+	},
+
+	"author": {
+		"name": "Kevin Cox",
+		"email": "kevincox@kevincox.ca",
+		"url": "https://kevincox.ca"
+	},
+
+	"main": "ricochetrobots.js"
+}

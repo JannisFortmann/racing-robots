@@ -1,0 +1,54 @@
+variables:
+  NIX_CI_ARTIFACTS: npm www
+  NIX_CI_EXTRA_SUBSTITUTERS: https://kevincox.cachix.org
+  NIX_CI_EXTRA_TRUSTED_PUBLIC_KEYS: kevincox.cachix.org-1:OJCxM3dZ61ZpOY1nwCXQL33G2svrVBN7zsd2jswXtj0=
+
+include:
+- remote: 'https://gitlab.com/kevincox/nix-ci/-/raw/v1/gitlab-ci.yml'
+
+test:
+  stage: build
+  image: rust:slim
+  variables:
+    CARGO_HOME: "target/cargo"
+    RUST_BACKTRACE: "1"
+    RUSTFLAGS: -D warnings
+  script:
+  - cargo test --locked
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - target/
+
+deploy-prod:
+  stage: deploy
+  only: [master]
+  needs:
+  - nix-ci:build
+  - test
+  environment:
+    name: prod
+    url: https://ricochetrobots.kevincox.ca
+  variables:
+    GIT_STRATEGY: none
+  image: nixos/nix
+  script:
+  - nix-store -r "$(curl https://kevincox.gitlab.io/statit/statit.nixpath)" --add-root statit --extra-substituters "$NIX_CI_EXTRA_SUBSTITUTERS" --extra-trusted-public-keys "$NIX_CI_EXTRA_TRUSTED_PUBLIC_KEYS"
+  - statit/bin/statit --bucket="$BUCKET" deploy results/www
+
+npm-publish:
+  stage: deploy
+  rules:
+  - if: '$CI_COMMIT_TAG =~ /^v\d+.\d+.\d+$/'
+  needs:
+  - nix-ci:build
+  - test
+  environment:
+    name: npm
+    url: https://www.npmjs.com/package/ricochetrobots
+  image: node
+  script:
+  - 'echo "Releasing version: $CI_COMMIT_TAG"'
+  - mv results/npm npm.tgz
+  - npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+  - npm publish npm.tgz

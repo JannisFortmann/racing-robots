@@ -1,6 +1,4 @@
-
-
-export async function convertBoardState() {
+export function convertBoardState() {
     const gridSize = 33;        // Original grid size in the document
     const outputSize = 16;      // Target board size for solver format
     const elements = document.querySelectorAll('.element'); // Get all elements with class 'element'
@@ -125,18 +123,5 @@ export async function convertBoardState() {
 
     console.log(boardString); // Log the final board format for verification
 
-    try {
-        // Call the Rust WebAssembly function with the board string directly
-        const result = await parse_board_string(boardString);
-
-        console.log("Parsed result from Rust:", result);
-        // Further logic to use the result as needed
-    } catch (error) {
-        console.error("Error parsing board string:", error);
-    }
+    return boardString; // Return the board format as a string
 }
-
-// Call the function to execute and log the board state for testing
-convertBoardState();
-
-// change 1

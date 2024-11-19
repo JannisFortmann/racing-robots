@@ -1,0 +1,40 @@
+[package]
+name = "ricochetrobots"
+description = "A game for modeling and solving Ricochet Robots puzzles."
+homepage = "https://gitlab.com/kevincox/ricochetrobots"
+repository = "https://gitlab.com/kevincox/ricochetrobots"
+license = "Apache-2.0"
+version = "0.0.0"
+authors = ["Kevin Cox <kevincox@kevincox.ca>"]
+edition = "2021"
+default-run = "solve"
+
+[dependencies]
+base64 = "0.22.0"
+clap = { version = "4.4.0", features = ["derive"] }
+serde = { version = "1.0.152", features = ["derive"] }
+serde-wasm-bindgen = "0.6.0"
+wasm-bindgen = {version = "0.2.83", features = ["serde-serialize"]}
+
+[dev-dependencies]
+criterion = "0.5.1"
+difference = "2.0.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[test]]
+name = "solutions"
+harness = false
+
+[[bench]]
+name = "quick"
+harness = false
+
+[[bench]]
+name = "solve"
+harness = false
+
+[profile.release]
+codegen-units = 1
+lto = true

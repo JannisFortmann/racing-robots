@@ -4,7 +4,7 @@ import { createRandomColoredSquares, saveBoardState, resetRobots } from './robot
 import { handleColoredSquareClick, handleNonColoredSquareClick, handleHighlightedSquareClick, resetMoveCounter, undoLastMove, clearMoveHistory } from './movement.js';
 import { shareBoard, shareSolution, showAlert } from './shareBoard.js';
 import { startRecording, saveRecording, playRecording, clearRecording, isRecording, stopPlayback } from './recording.js';
-import { convertBoardState } from './solver/formatBoard.js';
+import { getSolution } from './solver/getSolution.js'
 
 // Variable to keep track of the last colored square clicked
 let originalColoredSquare = null;
@@ -75,7 +75,7 @@ document.getElementById("new-target").addEventListener("click", () => {
     resetMoveCounter();
     clearMoveHistory();
     clearRecording();
-    convertBoardState();
+    getSolution();
 
     // Reset recording button state
     resetRecordingButton();

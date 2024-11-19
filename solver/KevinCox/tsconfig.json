@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"allowJs": false,
+		"importHelpers": true, // We don't actually have the helpers available, so produces an error.
+		"lib": [
+			"DOM",
+			"es2022",
+		],
+		"module": "es2022",
+		"noUncheckedIndexedAccess": true,
+		"strict": true,
+		"target": "es2021", // https://github.com/assetgraph/assetgraph/issues/1303
+	},
+	"include": [
+		"typescript/**/*.ts",
+		"wasm/**/*.d.ts",
+	],
+}

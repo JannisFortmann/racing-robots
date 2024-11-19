@@ -1,0 +1,6 @@
+**/*.rs.bk
+.netlify
+/target
+/wasm
+perf.data*
+result*

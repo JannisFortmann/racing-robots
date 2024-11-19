@@ -1,0 +1,417 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+
+	text-align: center;
+	font-family: sans-serif;
+	font-variant-emoji: unicode;
+	background: black;
+	color: white;
+
+	--c: purple;
+	--c-0: #666;
+	--c-1: red;
+	--c-2: green;
+	--c-3: yellow;
+	--c-4: #55F;
+
+	--c-fg: #FFF;
+	--c-0-fg: #FFF;
+	--c-1-fg: #FFF;
+	--c-2-fg: #FFF;
+	--c-3-fg: #000;
+	--c-4-fg: #FFF;
+}
+
+body {
+	display: grid;
+	grid:
+		"solve nav"
+		"game game"
+		"solution solution" 1fr
+		"footer footer"
+		/
+		1fr 1fr;
+
+	@media (min-aspect-ratio: 3/2) {
+		grid:
+			"game   .      solve    nav"
+			"game   .      .        ." 1em
+			"game   .      solution solution" 1fr
+			"footer footer footer   footer"
+			/
+			auto 1em 1fr 1fr;
+
+		> button {
+			place-self: start end;
+		}
+
+		> .vbar {
+			place-self: start start;
+		}
+	}
+
+	> #loading {
+		grid-area: 1 / 1 / footer-start / -1;
+		place-self: center;
+		max-width: 16em;
+
+		> img {
+			display: block;
+			margin: 1em auto;
+			max-width: 6em;
+		}
+	}
+
+	> button {
+		grid-area: solve;
+		place-self: start start;
+		margin: 0.4rem;
+	}
+
+	> .vbar {
+		grid-area: nav;
+		place-self: start end;
+		margin: 0.4rem;
+	}
+
+	> .gameui {
+		grid-area: game;
+		place-self: center center;
+
+		width: 50rem;
+		max-width: min(100vw, 90vh);
+	}
+
+	> :is(.play,.solution) {
+		grid-area: solution;
+	}
+
+	> footer {
+		grid-area: footer;
+	}
+}
+
+a {
+	color: #ABABFF;
+}
+
+a:visited {
+	color: #AF93FF;
+}
+
+button {
+	position: relative;
+	font-size: 2em;
+	display: flex;
+	align-items: center;
+	gap: 0.1em;
+
+	line-height: 1; /* Required for some symbols to be centered properly */
+	padding: 0.2em 0.65em;
+	
+	border: 1px solid #FFF;
+	border-radius: 0.4em;
+	
+	background: none;
+	color: white;
+	cursor: pointer;
+}
+button:is(:disabled, .disabled) {
+	color: #666;
+	cursor: not-allowed;
+}
+@media (hover: hover) {
+	/* Some devices (touchscreen phones) emulate hover after a touch or press. This interacts poorly with our focused state so just skip the hover rule unless the device claims full hover support. */
+	button:hover {
+		background: #666;
+	}
+}
+
+button.l > div:last-child {
+	transition: transform 0.2s;
+}
+
+button.l > div:last-child:not(:first-child) {
+	transition-delay: 0.2s;
+	transform: translateX(0.6em);
+}
+
+button.l > :first-child:not(:last-child) {
+	position: absolute;
+	font-size: 0.8em;
+	width: 1em;
+	left: 0.2em;
+
+	text-shadow: 0 0 2px #000;
+
+	animation: 0.2s ease 0.2s both zoomIn;
+	transform: scale(0);
+}
+
+dialog {
+	margin: 1em auto;
+	background: #222;
+	color: white;
+	box-shadow: 0 0 2em 1em black;
+	> form {
+		display: flex;
+		flex-flow: column;
+		gap: 0.4em;
+		text-align: center;
+		> * {
+			margin: 0;
+		}
+		> h2 {
+			margin-top: 0.4em;
+		}
+		>.m {
+			display: grid;
+			grid: auto / repeat(4, 1fr);
+		}
+	}
+}
+
+footer {
+	margin: 0.4em 0 0;
+	background: #333;
+	padding: 0.4em 0;
+}
+
+input, textarea {
+	padding: 0.4em;
+	background: #333;
+	color: #FFF;
+	border: none;
+	border-radius: 0.2em;
+}
+
+/* Note, this funny setup is to support browsers that don't support :user-invalid. */
+:is(input, textarea):invalid {
+	border: 1px solid red;
+}
+:is(input, textarea):not(:user-invalid) {
+	border: none;
+}
+
+nav {
+	display: flex;
+	margin: 0.2em 1px;
+}
+
+.color {
+	font-size: 2em;
+	padding: 0.4em;
+	min-height: 1.6em;
+	color: var(--c-fg);
+	background: var(--c);
+	border: none;
+}
+
+.c-0 { --c: var(--c-0); --c-fg: var(--c-0-fg) }
+.c-1 { --c: var(--c-1); --c-fg: var(--c-1-fg) }
+.c-2 { --c: var(--c-2); --c-fg: var(--c-2-fg) }
+.c-3 { --c: var(--c-3); --c-fg: var(--c-3-fg) }
+.c-4 { --c: var(--c-4); --c-fg: var(--c-4-fg) }
+
+.c-chip {
+	padding: 0.2em;
+	border-radius: 0.2em;
+	color: var(--c-fg);
+	background: var(--c);
+}
+
+svg {
+	.cell {
+		fill: none;
+	}
+
+	.grid {
+		stroke: #333;
+		stroke-width: 0.1;
+		fill: none;
+	}
+
+	.wall {
+		stroke: white;
+		stroke-linecap: round;
+		stroke-width: 0.1;
+		fill: none;
+	}
+
+	.robot {
+		fill: var(--c);
+		cursor: move;
+		stroke: #000;
+		stroke-width: 0.02px;
+	}
+
+	.cell .mirror {
+		stroke: var(--c);
+		stroke-linecap: round;
+		stroke-width: 0.1;
+	}
+
+	.cell.target {
+		fill: var(--c);
+	}
+}
+
+.gameui {
+	fill: var(--c);
+}
+
+.quarter {
+	border: none;
+}
+
+.mirror {
+	color: var(--c);
+	font-weight: 1000;
+}
+
+.notifications {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+
+	font-size: 1.4rem;
+
+	display: flex;
+	flex-flow: column-reverse;
+	align-items: end;
+
+	pointer-events: none;
+
+	> div {
+		margin: 0.6em;
+		padding: 0.4em;
+		background: #446;
+		border: 2px solid #666;
+		border-radius: 0.4em;
+		pointer-events: auto;
+
+		animation: 0.2s both liftIn;
+
+		&.e {
+			background: #822;
+			border-color: #AAA;
+		}
+	}
+}
+
+.play > div {
+	display: flex;
+	justify-content: center;
+}
+
+.play > ul {
+	list-style: none;
+	text-align: center;
+	margin: 0 2em;
+	padding: 0;
+}
+
+.play > ul > li {
+	width: 12em;
+	display: inline-block;
+	
+	animation: 0.2s ease both zoomIn;
+	transform: scale(0);
+}
+
+.spacer {
+	flex: 1;
+}
+
+.solution {
+	> form.g {
+		display: flex;
+		justify-content: center;
+	}
+	> form.s {
+		display: inline-grid;
+		grid-template-columns: auto auto auto minmax(0.2em, 1em) auto auto auto;
+		margin: 1em auto;
+		align-items: center;
+
+		> button {
+			grid-column: 1;
+		}
+
+		> .p {
+			grid-column: 2 / -1;
+		}
+
+		> .r {
+			grid-column: 2;
+			margin: 0 0.4em 0 0.8em;
+		}
+
+		> .d {
+			grid-column: 3;
+		}
+
+		> .p1 {
+			grid-column: 5;
+		}
+
+		> .a {
+			grid-column: 6;
+			margin: 0 0.4em;
+			color: #888;
+		}
+
+		> .p2 {
+			grid-column: 7;
+		}
+	}
+}
+
+.solution > form.s > button {
+	display: block;
+}
+.solution > form.s > button:not(:first-child) {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-top: none;
+}
+.solution > form.s > button:not(:last-of-type) {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.solution > form.s > div {
+	text-align: left;
+}
+
+.vbar {
+	display: flex;
+}
+.vbar > button:not(:first-child) {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left: none;
+	margin-left: 0;
+}
+.vbar > button:not(:last-child) {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin-right: 0;
+}
+
+@keyframes liftIn {
+	from {
+		transform: translateY(1em) scale(0.8);
+		opacity: 0;
+	}
+}
+
+@keyframes zoomIn {
+	to {
+		transform: scale(1);
+	}
+}
