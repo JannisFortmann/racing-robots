@@ -1,5 +1,6 @@
 import { db } from './main.js';
 import { saveBoardState } from './robots.js';
+import { recordedClicks } from './recording.js';
 import { addSquareListeners } from './eventListeners.js';
 import { doc, setDoc, getDoc, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -91,8 +92,8 @@ export async function shareSolution() {
     };
 
     // Add recorded solution if it exists
-    if (window.recordedClicks.length > 0) {
-        dataToStore.recordedClicks = window.recordedClicks;
+    if (recordedClicks.length > 0) {
+        dataToStore.recordedClicks = recordedClicks;
     }
 
     // Check if there's a circle in the corner and add it to the data to store
@@ -158,7 +159,7 @@ async function restoreBoardState(boardData) {
 
     // Refill recordedClicks if they exist in the restored data
     if (recordedClicks) {
-        window.recordedClicks = recordedClicks; // Restore the recorded clicks
+        recordedClicks = recordedClicks; // Restore the recorded clicks
     }
 
     // Call addSquareListeners to reattach event listeners
@@ -186,7 +187,7 @@ export async function checkForBoardState() {
             if (boardData.recordedClicks && boardData.recordedClicks.length > 0) {
                 enableAllButtons(); // Enable all buttons if solution exists
             } else {
-                enableRecordingAndShareBoardButtons(); // Enable only specific buttons
+                enableRecordingButton(); // Enable only specific buttons
             }
         } else {
             console.error('No board state found for this ID.');
@@ -201,9 +202,8 @@ function enableAllButtons() {
 }
 
 // Function to enable only the recording and share-board buttons
-function enableRecordingAndShareBoardButtons() {
+function enableRecordingButton() {
     document.getElementById('recording-button').disabled = false;
-    document.getElementById('share-board').disabled = false;
 }
 
 // Call the checkForBoardState on page load

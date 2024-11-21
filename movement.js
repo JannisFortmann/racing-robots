@@ -1,9 +1,9 @@
 import { animateSquareMovement,animateSquareRotation } from './animation.js'; // Import the animation function
-import { recordClick } from './recording.js';
+import { recordClick, isRecording, recordedClicks } from './recording.js';
 
 
 let originalColoredSquare = null;
-let moveCount = 0;
+export let moveCount = 0;
 export let moveHistory = [];
 
 // Function to clear highlighted squares and remove event listeners
@@ -54,8 +54,15 @@ export function clearMoveHistory() {
 }
 
 export function undoLastMove() {
+    // Remove the last two entries if we're recording
+if (isRecording) {
+    recordedClicks.splice(-2, 2); // Removes up to 2 elements from the end
+}
+
+    
+
+    // Call the original undo logic from movement.js
     if (moveHistory.length === 0) {
-        console.log("No moves to undo");
         return; // No moves to undo
     }
 
@@ -99,6 +106,7 @@ export function undoLastMove() {
 
 
 
+
 // Function to handle clicks on squares with the "colored" class
 export function handleColoredSquareClick(event) {
     const clickedSquare = event.target;
@@ -106,10 +114,7 @@ export function handleColoredSquareClick(event) {
     // Clear previously highlighted squares and their event listeners
     clearHighlightedSquares();
 
-    // Call recordClick for colored square
-    recordClick(clickedSquare, false);
-
-    // Get the color of the clicked square
+        // Get the color of the clicked square
     const color = window.getComputedStyle(clickedSquare).backgroundColor;
     const [r, g, b] = color.match(/\d+/g); // Extract RGB values
     const newColor = `rgba(${r}, ${g}, ${b}, 0.3)`; // Add 0.3 opacity
@@ -122,7 +127,6 @@ export function handleColoredSquareClick(event) {
     const row = Math.floor(index / boardSize);
     const col = index % boardSize;
 
-    console.log(`Clicked square index: ${index}, row: ${row}, col: ${col}`);
 
     // Highlight squares in the up direction
     let upObstacleCount = 0;
@@ -209,12 +213,12 @@ export function handleHighlightedSquareClick(event) {
     const clickedSquare = event.target;
 
     // Call recordClick for highlighted square
+    recordClick(originalColoredSquare, false);
     recordClick(clickedSquare, true);
 
     // The arm classes help identify the direction of the highlighted path
     const armClasses = ['armUp', 'armDown', 'armLeft', 'armRight'];
     const currentArmClass = armClasses.find(armClass => clickedSquare.classList.contains(armClass));
-    console.log("Current arm class:", currentArmClass); // Log the current arm class
 
     // Get all highlighted squares
     const highlightedSquares = Array.from(document.querySelectorAll('#board > .element')); // Select 33x33 grid
@@ -223,7 +227,6 @@ export function handleHighlightedSquareClick(event) {
     const squaresInDirection = highlightedSquares.filter(square => square.classList.contains(currentArmClass));
 
     if (squaresInDirection.length === 0) {
-        console.log("No squares found in the selected direction");
         return;
     }
 
@@ -241,7 +244,6 @@ export function handleHighlightedSquareClick(event) {
         );
     }
 
-    console.log("Target square found:", targetSquare); // Log the target square
 
     // Find the circle element dynamically and get its color
     const circleElement = document.querySelector('.circle');
@@ -286,7 +288,6 @@ export function handleHighlightedSquareClick(event) {
             const shouldRotate = targetSquare.classList.contains('target') && originalColor === circleColor;
 
             if (shouldRotate) {
-                console.log("Triggering rotation animation for matching colors and target square."); // Log the animation trigger
                 animateSquareRotation(targetSquare, 720);
             } else {
                 // Trigger handleColoredSquareClick only if rotation is not initiated

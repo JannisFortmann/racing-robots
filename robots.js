@@ -1,5 +1,5 @@
-// Colors for the random squares
-const colors = ['#FF8080', '#B1AFFF', '#7BD3EA', '#A5DD9B'];
+// Robot colors: red, green, blue, purple
+const colors = ['#FF8080', '#A5DD9B', '#B1AFFF', '#7BD3EA'];
 const squares = document.querySelectorAll('#board > .element.square'); // Select only the "square" elements within the board
 
 // Function to clear previously generated colored squares

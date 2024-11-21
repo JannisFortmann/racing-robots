@@ -131,10 +131,6 @@ button {
     -moz-user-select: none;
 }
 
-/* Hide the clipboard button on larger screens */
-#check-clipboard {
-    display: none; /* Hide by default */
-}
 
 button:last-child {
     margin-bottom: 0;
@@ -275,11 +271,6 @@ button:disabled:hover {
 
     button:active {
         background-color: #848282; /* Apply hover color only while pressing */
-    }
-
-    #check-clipboard {
-        display: block; /* Show on mobile */
-        margin-top: 50px; /* Adjust this value to position it lower */
     }
 
     /* Smaller font and padding for the move counter */

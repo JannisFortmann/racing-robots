@@ -1,10 +1,22 @@
 import { thickenEdgeLines, thickenCorners } from './obstacles.js';
 import { pickRandomSquareAndDisplayCircle, clearAllCircles } from './newTarget.js';
 import { createRandomColoredSquares, saveBoardState, resetRobots } from './robots.js';
-import { handleColoredSquareClick, handleNonColoredSquareClick, handleHighlightedSquareClick, resetMoveCounter, undoLastMove, clearMoveHistory } from './movement.js';
-import { shareBoard, shareSolution, showAlert } from './shareBoard.js';
-import { startRecording, saveRecording, playRecording, clearRecording, isRecording, stopPlayback } from './recording.js';
+import { handleColoredSquareClick, handleNonColoredSquareClick, handleHighlightedSquareClick, resetMoveCounter, undoLastMove, clearMoveHistory, moveCount } from './movement.js';
+import { shareBoard, shareSolution } from './shareBoard.js';
+import { startRecording, saveRecording, playRecording, clearRecording, isRecording, stopPlayback, recordedClicks } from './recording.js';
 import { getSolution } from './solver/getSolution.js'
+import { playSolvedSolution, solutionStepsCount } from './solver/getSolution.js';
+
+const undoButton = document.getElementById("undo");
+const resetButton = document.getElementById("reset-robots");
+const newTargetButton = document.getElementById("new-target");
+const newBoardButton = document.getElementById("new-board");
+
+const recordingButton = document.getElementById('recording-button');
+const replayButton = document.getElementById('play-saved-solution');
+const shareButton = document.getElementById('share-button');
+const solveButton = document.getElementById('find-solution');
+
 
 // Variable to keep track of the last colored square clicked
 let originalColoredSquare = null;
@@ -32,43 +44,34 @@ function handleBoardClick(event) {
     if (!clickedSquare) return;
 
     if (clickedSquare.classList.contains('colored')) {
-        console.log("Colored square clicked");
         originalColoredSquare = clickedSquare; // Track the original colored square
         handleColoredSquareClick(event);
     } else if (clickedSquare.classList.contains('square') && !clickedSquare.classList.contains('highlighted')) {
-        console.log("Non-colored, non-highlighted square clicked");
         handleNonColoredSquareClick(event);
     } else if (clickedSquare.classList.contains('highlighted')) {
-        console.log("Highlighted square clicked");
         handleHighlightedSquareClick(event, originalColoredSquare); // Pass the tracked colored square
     }
 }
 
 // Event listeners for control buttons
 
-// Undo button
-document.getElementById("undo").addEventListener("click", () => {
+undoButton.addEventListener("click", () => {
     stopPlayback();
     undoLastMove();
 });
 
 // Reset robots button
-document.getElementById("reset-robots").addEventListener("click", () => {
+resetButton.addEventListener("click", () => {
     stopPlayback();
     resetRobots();
     resetMoveCounter();
     clearMoveHistory();
 });
 
-// Function to reset the recording button to its initial state
-function resetRecordingButton() {
-    recordingButton.textContent = "Record Solution";
-    recordingButton.style.backgroundColor = "#333";
-    recordingButton.style.color = "white"; 
-}
+
 
 // New target button
-document.getElementById("new-target").addEventListener("click", () => {
+newTargetButton.addEventListener("click", () => {
     stopPlayback();
     pickRandomSquareAndDisplayCircle();
     resetRobots();
@@ -79,14 +82,22 @@ document.getElementById("new-target").addEventListener("click", () => {
 
     // Reset recording button state
     resetRecordingButton();
+    resetSolveButton();
+    
+    solveButton.disabled = false;
+    recordingButton.disabled = false;
+    shareButton.disabled = false;
 
     // Disable replay and share buttons after creating a new target
     replayButton.disabled = true;
-    shareButton.disabled = true;
+
+    replayButton.textContent = "Play Solution";
+    shareButton.textContent = "Share Board"
+
 });
 
 // New board button
-document.getElementById("new-board").addEventListener("click", () => {
+newBoardButton.addEventListener("click", () => {
     stopPlayback();
     thickenEdgeLines();
     thickenCorners();
@@ -100,38 +111,63 @@ document.getElementById("new-board").addEventListener("click", () => {
 
     // Reset recording button state
     resetRecordingButton();
+    resetSolveButton();
 
     // Enable recording and share board buttons
-    recordingButton.disabled = false;
-    shareBoardButton.disabled = false;
 
     // Disable replay and share buttons after creating a new board
     replayButton.disabled = true;
     shareButton.disabled = true;
+    solveButton.disabled = true;
+    recordingButton.disabled = true;
+
+    replayButton.textContent = "Play Solution";
+    shareButton.textContent = "Share Board"
+
+
 });
 
-// Share Board button
-document.getElementById("share-board").addEventListener("click", () => {
+let isFirstClick = true;
+
+solveButton.addEventListener("click", async () => {
     stopPlayback();
-    resetRobots();
-    resetMoveCounter();
-    clearMoveHistory();
-    shareBoard();
+
+    // Change appearance on first click
+    if (isFirstClick) {
+        solveButton.style.color = "#333";
+        solveButton.style.backgroundColor = "#A5DD9B";
+        solveButton.textContent = `Best Solution (${solutionStepsCount})`;
+        isFirstClick = false;
+    } else {
+        playSolvedSolution();
+    }
 });
 
-// Buttons for recording, replaying, and sharing solutions
-const recordingButton = document.getElementById('recording-button');
-const replayButton = document.getElementById('play-saved-solution');
-const shareButton = document.getElementById('share-solution');
-const shareBoardButton = document.getElementById('share-board');
+// Function to reset the recording button to its initial state
+function resetRecordingButton() {
+    recordingButton.textContent = "Record Solution";
+    recordingButton.style.backgroundColor = "#333";
+    recordingButton.style.color = "white"; 
+}
+
+function resetSolveButton() {
+    solveButton.textContent = "Solve Board";
+    solveButton.style.backgroundColor = "#333";
+    solveButton.style.color = "white"; 
+    isFirstClick = true;
+}
 
 // Initialize disabled state for replay, recording, and share board buttons
-recordingButton.disabled = true;
-shareBoardButton.disabled = true;
+
 replayButton.disabled = !hasRecordedSolution; // Disable based on recorded solution state
 shareButton.disabled = !hasRecordedSolution;   // Disable based on recorded solution state
 
+// recording button
 recordingButton.addEventListener('click', () => {
+    replayButton.textContent = "Play Solution";
+    shareButton.textContent = "Share Board"
+
+    
     if (isRecording) {
         // If currently recording, save the recording and update the button
         stopPlayback();
@@ -139,15 +175,22 @@ recordingButton.addEventListener('click', () => {
         resetRecordingButton();
 
         // Enable replay and share buttons only if recordedClicks has entries
-        if (window.recordedClicks.length > 0) {
-            hasRecordedSolution = true; // Update the state
-            replayButton.disabled = false;
-            shareButton.disabled = false;
-        }
+if (recordedClicks.length > 0) {
+    hasRecordedSolution = true; // Update the state
+    replayButton.disabled = false;
+    shareButton.disabled = false;
+
+    // Update the replay button text with the move count
+    replayButton.textContent = `Play Solution (${moveCount})`;
+    shareButton.textContent = "Share Solution"
+}
+
     } else {
         // If not recording, start a new recording and update the button
         stopPlayback();
         startRecording();
+        resetMoveCounter();
+
         recordingButton.textContent = "Save Recording";
         recordingButton.style.backgroundColor = "#FF8080"; // Red for "Save Recording"
         recordingButton.style.color = "#333"; 
@@ -159,40 +202,22 @@ recordingButton.addEventListener('click', () => {
 });
 
 // Play saved recording button
-document.getElementById("play-saved-solution").addEventListener("click", () => {
+replayButton.addEventListener("click", () => {
     stopPlayback();
     clearMoveHistory();
     playRecording();
 });
 
 // Share Solution button
-document.getElementById("share-solution").addEventListener("click", () => {
-    if (hasRecordedSolution) {
-        stopPlayback();
+shareButton.addEventListener("click", () => {
+    stopPlayback();
         resetRobots();
         resetMoveCounter();
         clearMoveHistory();
+    if (hasRecordedSolution) {
         shareSolution(); 
     } else {
-        alert('No recorded solution available to share.');
+        shareBoard();
     }
 });
 
-document.getElementById('check-clipboard').addEventListener('click', async () => {
-    try {
-        // Read the clipboard text
-        const clipboardText = await navigator.clipboard.readText();
-
-        // Check if the clipboard text starts with the specified base URL
-        const baseUrl = 'https://rr-421.web.app/';
-        if (clipboardText.startsWith(baseUrl)) {
-            // If valid, navigate to the URL
-            window.location.href = clipboardText;
-        } else {
-            showAlert('No valid URL found in clipboard.');
-        }
-    } catch (err) {
-        console.error('Failed to read clipboard contents: ', err);
-        showAlert('Failed to read clipboard contents.');
-    }
-});

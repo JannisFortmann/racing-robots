@@ -4,54 +4,45 @@ import { handleColoredSquareClick, handleHighlightedSquareClick, clearHighlighte
 // Initialize variables
 let isRecording = false; // Tracks if recording is in progress
 let hasRecordedSolution = false; // Tracks if a solution has been recorded
+let recordedClicks = []; // Stores the recorded sequence of clicks
 
 export function clearRecording() {
-    window.recordedClicks = []; // Clear recorded clicks
+    recordedClicks = []; // Clear recorded clicks
     isRecording = false; // Reset recording state
     hasRecordedSolution = false; // Indicate no solution is recorded
 }
 
 export function startRecording() {
     isRecording = true; // Set recording mode
-    window.recordedClicks = []; // Clear any previous recordings
+    recordedClicks = []; // Clear any previous recordings
     resetRobots(); // Reset the robots to their initial positions
     clearHighlightedSquares(); // Clear any previously highlighted squares
-    console.log("Recording started");
 }
 
-// Function to stop recording and save the recorded clicks
 export function saveRecording() {
     if (!isRecording) {
-        console.log("No recording in progress to save.");
         return;
     }
     isRecording = false; // Stop recording mode
     hasRecordedSolution = true; // Mark that a solution has been recorded
-
-    console.log("Recording saved");
 }
 
-// Initialize replayTimeouts array to keep track of timeouts
-let replayTimeouts = [];
+export let replayTimeouts = [];
 
-// Function to stop th playback
 export function stopPlayback() {
-    // Clear each timeout in replayTimeouts
     replayTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
-    replayTimeouts = []; // Reset the array
+    replayTimeouts = [];
 }
 
-// Function to play the recorded clicks in order
 export function playRecording() {
     if (recordedClicks.length === 0) {
-        console.log("No recorded solution to play.");
         return;
     }
 
-    stopPlayback(); // Stop any ongoing playback before starting a new one
-    resetRobots(); // Reset robots to their initial position
-    resetMoveCounter(); // Reset the move counter
-    clearHighlightedSquares(); // Clear highlighted squares before playback
+    stopPlayback();
+    resetRobots();
+    resetMoveCounter();
+    clearHighlightedSquares();
 
     const elements = document.querySelectorAll('#board .element');
     recordedClicks.forEach((click, index) => {
@@ -60,28 +51,23 @@ export function playRecording() {
             const square = elements[squareIndex];
             if (square) {
                 if (isHighlighted) {
-                    handleHighlightedSquareClick({ target: square }); // Simulate highlighted square click
+                    handleHighlightedSquareClick({ target: square });
                 } else {
-                    handleColoredSquareClick({ target: square }); // Simulate colored square click
+                    handleColoredSquareClick({ target: square });
                 }
             }
-        }, index * 500); // 0.5-second delay between moves
+        }, index * 500);
 
-        // Store the timeout ID in replayTimeouts
         replayTimeouts.push(timeoutId);
     });
 }
 
-
-// Function to record a click on a square
 export function recordClick(square, isHighlighted) {
     if (isRecording) {
-        const index = Array.from(document.querySelectorAll('#board .element')).indexOf(square); // Get index of the element
-        recordedClicks.push({ index, isHighlighted }); // Store the index instead of the element
-        console.log(`Recorded ${isHighlighted ? 'highlighted' : 'colored'} square click.`);
+        const index = Array.from(document.querySelectorAll('#board .element')).indexOf(square);
+        recordedClicks.push({ index, isHighlighted });
     }
 }
 
-
-// Export variables to track recording state
-export { isRecording, hasRecordedSolution };
+// Export variables for use in other modules
+export { isRecording, hasRecordedSolution, recordedClicks };
