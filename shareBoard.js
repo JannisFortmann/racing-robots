@@ -1,8 +1,9 @@
 import { db } from './main.js';
 import { saveBoardState } from './robots.js';
-import { recordedClicks } from './recording.js';
-import { addSquareListeners } from './eventListeners.js';
+import { addSquareListeners, shareButton, replayButton } from './eventListeners.js';
 import { doc, setDoc, getDoc, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { convertBoardState } from './solver/formatBoard.js';
+import { getSolution } from './solver/getSolution.js';
 
 // Function to generate a unique identifier using Firestore
 async function generateId() {
@@ -92,8 +93,10 @@ export async function shareSolution() {
     };
 
     // Add recorded solution if it exists
-    if (recordedClicks.length > 0) {
-        dataToStore.recordedClicks = recordedClicks;
+    if (window.recordedClicks.length > 0) {
+
+        dataToStore.recordedClicks = window.recordedClicks;
+
     }
 
     // Check if there's a circle in the corner and add it to the data to store
@@ -158,10 +161,13 @@ async function restoreBoardState(boardData) {
     }
 
     // Refill recordedClicks if they exist in the restored data
-    if (recordedClicks) {
-        recordedClicks = recordedClicks; // Restore the recorded clicks
-    }
 
+    if (recordedClicks) {
+
+        window.recordedClicks = recordedClicks; // Restore the recorded clicks
+
+    }
+   
     // Call addSquareListeners to reattach event listeners
     addSquareListeners(); // Add event listeners after restoring the board state
 
@@ -181,19 +187,29 @@ export async function checkForBoardState() {
 
         if (docSnap.exists()) {
             const boardData = docSnap.data();
-            restoreBoardState(boardData);
+            await restoreBoardState(boardData); // Ensure restoration completes first
 
             // Check if the board state includes a solution (recordedClicks)
             if (boardData.recordedClicks && boardData.recordedClicks.length > 0) {
-                enableAllButtons(); // Enable all buttons if solution exists
+                enableAllButtons(); // Enable all buttons if a solution exists
+                console.log(boardData.recordedClicks);  // Confirm it is an array with the correct data
+
+                window.hasRecordedSolution = true;
+                shareButton.textContent = "Share Solution";
+                replayButton.textContent = `Play Solution (${boardData.recordedClicks.length/2})`;
             } else {
-                enableRecordingButton(); // Enable only specific buttons
+                enableSomeButtons(); // Enable only specific buttons
             }
+
+            // Call these functions only after the board is fully restored
+            convertBoardState();
+            getSolution();
         } else {
             console.error('No board state found for this ID.');
         }
     }
 }
+
 
 // Function to enable all buttons
 function enableAllButtons() {
@@ -202,9 +218,15 @@ function enableAllButtons() {
 }
 
 // Function to enable only the recording and share-board buttons
-function enableRecordingButton() {
+function enableSomeButtons() {
     document.getElementById('recording-button').disabled = false;
+    document.getElementById('share-button').disabled = false;
+    document.getElementById('find-solution').disabled = false;
+
 }
 
 // Call the checkForBoardState on page load
-window.onload = checkForBoardState;
+window.onload = () => {
+    checkForBoardState();
+
+};

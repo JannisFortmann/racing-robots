@@ -4,17 +4,16 @@ import { handleColoredSquareClick, handleHighlightedSquareClick, clearHighlighte
 // Initialize variables
 let isRecording = false; // Tracks if recording is in progress
 let hasRecordedSolution = false; // Tracks if a solution has been recorded
-let recordedClicks = []; // Stores the recorded sequence of clicks
 
 export function clearRecording() {
-    recordedClicks = []; // Clear recorded clicks
+    window.recordedClicks = []; // Clear recorded clicks
     isRecording = false; // Reset recording state
     hasRecordedSolution = false; // Indicate no solution is recorded
 }
 
 export function startRecording() {
     isRecording = true; // Set recording mode
-    recordedClicks = []; // Clear any previous recordings
+    window.recordedClicks = []; // Clear any previous recordings
     resetRobots(); // Reset the robots to their initial positions
     clearHighlightedSquares(); // Clear any previously highlighted squares
 }
@@ -70,4 +69,4 @@ export function recordClick(square, isHighlighted) {
 }
 
 // Export variables for use in other modules
-export { isRecording, hasRecordedSolution, recordedClicks };
+export { isRecording, hasRecordedSolution };

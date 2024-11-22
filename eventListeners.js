@@ -3,7 +3,7 @@ import { pickRandomSquareAndDisplayCircle, clearAllCircles } from './newTarget.j
 import { createRandomColoredSquares, saveBoardState, resetRobots } from './robots.js';
 import { handleColoredSquareClick, handleNonColoredSquareClick, handleHighlightedSquareClick, resetMoveCounter, undoLastMove, clearMoveHistory, moveCount } from './movement.js';
 import { shareBoard, shareSolution } from './shareBoard.js';
-import { startRecording, saveRecording, playRecording, clearRecording, isRecording, stopPlayback, recordedClicks } from './recording.js';
+import { startRecording, saveRecording, playRecording, clearRecording, isRecording, stopPlayback } from './recording.js';
 import { getSolution } from './solver/getSolution.js'
 import { playSolvedSolution, solutionStepsCount } from './solver/getSolution.js';
 
@@ -13,8 +13,8 @@ const newTargetButton = document.getElementById("new-target");
 const newBoardButton = document.getElementById("new-board");
 
 const recordingButton = document.getElementById('recording-button');
-const replayButton = document.getElementById('play-saved-solution');
-const shareButton = document.getElementById('share-button');
+export const replayButton = document.getElementById('play-saved-solution');
+export const shareButton = document.getElementById('share-button');
 const solveButton = document.getElementById('find-solution');
 
 
@@ -22,7 +22,7 @@ const solveButton = document.getElementById('find-solution');
 let originalColoredSquare = null;
 
 // Variable to keep track of the recorded solution state
-let hasRecordedSolution = false; // Initialize it properly
+window.hasRecordedSolution = false; // Initialize it properly
 
 // Function to add event listener to the board using event delegation
 export function addSquareListeners() {
@@ -159,8 +159,8 @@ function resetSolveButton() {
 
 // Initialize disabled state for replay, recording, and share board buttons
 
-replayButton.disabled = !hasRecordedSolution; // Disable based on recorded solution state
-shareButton.disabled = !hasRecordedSolution;   // Disable based on recorded solution state
+replayButton.disabled = !window.hasRecordedSolution; // Disable based on recorded solution state
+shareButton.disabled = !window.hasRecordedSolution;   // Disable based on recorded solution state
 
 // recording button
 recordingButton.addEventListener('click', () => {
@@ -175,14 +175,14 @@ recordingButton.addEventListener('click', () => {
         resetRecordingButton();
 
         // Enable replay and share buttons only if recordedClicks has entries
-if (recordedClicks.length > 0) {
-    hasRecordedSolution = true; // Update the state
+if (window.recordedClicks.length > 0) {
+    window.hasRecordedSolution = true; // Update the state
     replayButton.disabled = false;
     shareButton.disabled = false;
 
     // Update the replay button text with the move count
     replayButton.textContent = `Play Solution (${moveCount})`;
-    shareButton.textContent = "Share Solution"
+    shareButton.textContent = "Share Solution";
 }
 
     } else {
@@ -214,7 +214,7 @@ shareButton.addEventListener("click", () => {
         resetRobots();
         resetMoveCounter();
         clearMoveHistory();
-    if (hasRecordedSolution) {
+    if (window.hasRecordedSolution) {
         shareSolution(); 
     } else {
         shareBoard();
