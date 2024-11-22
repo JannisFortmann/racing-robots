@@ -1,5 +1,5 @@
 import { animateSquareMovement,animateSquareRotation } from './animation.js'; // Import the animation function
-import { recordClick, isRecording, recordedClicks } from './recording.js';
+import { recordClick, isRecording } from './recording.js';
 
 
 let originalColoredSquare = null;
@@ -56,7 +56,7 @@ export function clearMoveHistory() {
 export function undoLastMove() {
     // Remove the last two entries if we're recording
 if (isRecording) {
-    recordedClicks.splice(-2, 2); // Removes up to 2 elements from the end
+    window.recordedClicks.splice(-2, 2); // Removes up to 2 elements from the end
 }
 
     
