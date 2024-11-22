@@ -224,19 +224,24 @@ button:disabled:hover {
         min-height: auto; /* Remove full viewport height to avoid extra vertical space */
     }
       
+   
+
     #board {
-        width: calc(100vw - 4px); /* Full width minus 2px margin on each side */
+        width: calc(100vmin - 4px);  /* Ensures the board is square */
+        height: calc(100vmin - 4px);
         margin: 20px 2px 0px;
         border: 1px solid #505050;
+        padding: env(safe-area-inset-top); /* Adjust padding for safe areas */
 
     }
-
-    /* Calculate square size dynamically */
+    
     .square {
-        /* Deducting 19px (for lines and border) and dividing by 16 squares */
-        width: calc((100vw - 21px) / 16);
-        height: calc((100vw - 21px) / 16);
+        width: calc((100vmin - 21px) / 16);  /* Adjusts dynamically for 16 squares */
+        height: calc((100vmin - 21px) / 16);
+        box-sizing: border-box; /* Includes padding and border in width/height */
     }
+    
+    
 
     .point {
         width: 1px;
