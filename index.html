@@ -1,47 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>Racing Robots</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#505050">
-    <link rel="icon" href="icons/icon-192x192.png" sizes="192x192">
-    <link rel="icon" href="icons/icon-512x512.png" sizes="512x512">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <meta name="description" content="A Progressive Web App inspired by the board game 'ricochet robots' (published by Abacusspiele/Rio Grande Games). Solver logic by Kevin Cox (https://gitlab.com/kevincox/ricochetrobots).">
-
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#505050" />
+    <link rel="icon" href="icons/icon-192x192.png" sizes="192x192" />
+    <link rel="icon" href="icons/icon-512x512.png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+    <meta
+      name="description"
+      content="A Progressive Web App inspired by the board game 'ricochet robots' (published by Abacusspiele/Rio Grande Games). Solver logic by Kevin Cox (https://gitlab.com/kevincox/ricochetrobots)."
+    />
+  </head>
+  <body>
     <div id="board"></div>
     <div id="controls">
-        <div id="move-counter">Moves: 0</div>
-        <div class="button-group">
-            <div class="groups12">
-                <div class="group1-buttons">
-                    <button id="undo">Undo Last Move</button>
-                    <button id="reset-robots">Reset Robots</button>
-                </div>
-                <div class="group2-buttons">
-                    <button id="new-target">New Target</button>
-                    <button id="new-board">New Board</button>
-                </div>
-            </div>
-            <div class="groups34">
-                <div class="group3-buttons">
-                    <button id="recording-button" disabled>Record Solution</button>
-                    <button id="play-saved-solution" disabled>Play Solution</button>
-                </div>
-                <div class="group4-buttons">
-                    <button id="share-button" disabled>Share Board</button>
-                    <button id="find-solution" disabled>Solve Board</button>
-                </div>
-            </div>
+      <div id="move-counter">Moves: 0</div>
+      <div class="button-group">
+        <div class="groups12">
+          <div class="group1-buttons">
+            <button id="undo" disabled>Undo Last Move</button>
+            <button id="reset-robots" disabled>Reset Robots</button>
+          </div>
+          <div class="group2-buttons">
+            <button id="new-target" disabled>New Target</button>
+            <button id="new-board">New Board</button>
+          </div>
         </div>
-
+        <div class="groups34">
+          <div class="group3-buttons">
+            <button id="recording-button" disabled>Record Solution</button>
+            <button id="play-saved-solution" disabled>Play Solution</button>
+          </div>
+          <div class="group4-buttons">
+            <button id="share-button" disabled>Share Board</button>
+            <button id="find-solution" disabled>Solve Board</button>
+          </div>
+        </div>
+      </div>
     </div>
-    
+
     <script src="main.js" type="module"></script>
     <script src="obstacles.js" type="module"></script>
     <script src="robots.js" type="module"></script>
@@ -50,5 +54,5 @@
     <script src="eventListeners.js" type="module"></script>
     <script src="animation.js" type="module"></script>
     <script src="shareBoard.js" type="module"></script>
-</body>
+  </body>
 </html>
