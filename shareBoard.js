@@ -56,29 +56,27 @@ export function showAlert(message) {
   setTimeout(() => alertElement.remove(), 2000);
 }
 
-// Function to copy to clipboard with fallback
-function copyToClipboard(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    // Modern approach: Clipboard API
-    return navigator.clipboard.writeText(text);
-  } else {
-    // Fallback for older iOS/Safari versions
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "absolute";
-    textArea.style.left = "-9999px";
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand("copy"); // Fallback method
-      return Promise.resolve(); // Simulate async behavior
-    } catch (err) {
-      console.error("Fallback copy failed:", err);
-      return Promise.reject(err);
-    } finally {
-      document.body.removeChild(textArea);
-    }
-  }
+function showUrl(url) {
+  // Create the container div
+  const urlElement = document.createElement("div");
+  urlElement.className = "show-url";
+  urlElement.textContent = url;
+
+  // Create the close button (X)
+  const closeButton = document.createElement("span");
+  closeButton.className = "close-btn";
+  closeButton.textContent = "×"; // Unicode for 'x'
+
+  // Add click event to close the popup
+  closeButton.addEventListener("click", () => {
+    document.body.removeChild(urlElement);
+  });
+
+  // Append the close button to the URL element
+  urlElement.appendChild(closeButton);
+
+  // Append the URL element to the body
+  document.body.appendChild(urlElement);
 }
 
 // Function to share the board state using Firestore
@@ -104,9 +102,15 @@ export async function shareBoard() {
 
   const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
 
-  copyToClipboard(shareableUrl)
-    .then(() => showAlert("Board state copied to clipboard"))
-    .catch((err) => console.error("Could not copy text: ", err));
+  // Attempt to copy using Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(shareableUrl)
+      .then(() => showAlert("Board state copied to clipboard"))
+      .catch(() => showUrl(shareableUrl)); // Fallback if copying fails
+  } else {
+    showUrl(shareableUrl); // Fallback for unsupported browsers
+  }
 }
 
 // Function to share the board state and recorded solution using Firestore
@@ -136,9 +140,15 @@ export async function shareSolution() {
 
   const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
 
-  copyToClipboard(shareableUrl)
-    .then(() => showAlert("Solution copied to clipboard"))
-    .catch((err) => console.error("Could not copy text: ", err));
+  // Attempt to copy using Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(shareableUrl)
+      .then(() => showAlert("Solution copied to clipboard"))
+      .catch(() => showUrl(shareableUrl)); // Fallback if copying fails
+  } else {
+    showUrl(shareableUrl); // Fallback for unsupported browsers
+  }
 }
 
 // Function to restore the board state and refill savedBoardState

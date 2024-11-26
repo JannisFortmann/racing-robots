@@ -234,6 +234,37 @@ button:disabled:hover {
   z-index: 1000;
 }
 
+.show-url {
+  position: fixed;
+  top: 43.5%;
+  left: 50%;
+  width: 250px; /* Adjust width to control text wrapping */
+  transform: translate(-50%, -50%);
+  font-family: "Arial", sans-serif;
+  font-size: 18px;
+  background-color: #333;
+  color: #fff;
+  padding: 1em 2em;
+  border-radius: 5px;
+  opacity: 1;
+  text-align: center;
+  z-index: 1000;
+}
+
+.show-url .close-btn {
+  position: absolute;
+  top: 8px; /* Adjust position from the top */
+  right: 10px; /* Adjust position from the right */
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+}
+
+.show-url .close-btn:hover {
+  color: #ff8080; /* Change color on hover to indicate interactivity */
+}
+
 @keyframes fadeOut {
   0% {
     opacity: 1;
@@ -326,7 +357,8 @@ button:disabled:hover {
     height: 13px;
   }
 
-  .custom-alert {
+  .custom-alert,
+  .show-url {
     top: 24.5%; /* Moves the alert further up on smaller screens */
   }
 }
