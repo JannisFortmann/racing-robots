@@ -299,6 +299,21 @@ button:disabled:hover {
     background-color: #848282; /* Apply hover color only while pressing */
   }
 
+  button.solver-active:hover {
+    background-color: #a5dd9b; /* Different hover effect for active button */
+  }
+
+  button.recording-active:hover {
+    background-color: #ff8080; /* Red during recording */
+  }
+  button.solver-active:active {
+    background-color: #c5e8be; /* Different hover effect for active button */
+  }
+
+  button.recording-active:active {
+    background-color: #fca9a9; /* Red during recording */
+  }
+
   /* Smaller font and padding for the move counter */
   #move-counter {
     font-size: 16px;
